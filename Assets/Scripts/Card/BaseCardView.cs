@@ -44,14 +44,14 @@ public abstract class BaseCardView : MonoBehaviour
         Data = newData;
     }
     
-    public void SetCardData(string name, int attack, int defense)
+    public void SetCardData(CardType type, int attack, int defense)
     {
-        Data = new CardData(name, attack, defense);
+        Data = new CardData(type, attack, defense);
     }
     
     public virtual void PlayCard()
     {
-        Debug.Log($"Playing card: {cardData.CardName} (ATK: {cardData.Attack}, DEF: {cardData.Defense})");
+        Debug.Log($"Playing card: {cardData.CardType} (ATK: {cardData.Attack}, DEF: {cardData.Defense})");
     }
     
     public abstract void HighlightCard(bool highlight);
@@ -65,7 +65,7 @@ public abstract class BaseCardView : MonoBehaviour
     
     protected virtual void OnCardClicked()
     {
-        Debug.Log($"Card clicked: {cardData.CardName}");
+        Debug.Log($"Card clicked: {cardData.CardType}");
         IsSelected = !IsSelected;
         NotifyCardClicked();
     }

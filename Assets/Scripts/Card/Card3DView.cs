@@ -65,7 +65,7 @@ public class Card3DView : BaseCardView
     protected override void UpdateUI()
     {
         if (cardNameText != null)
-            cardNameText.text = cardData.CardName;
+            cardNameText.text = cardData.CardType.ToString();
             
         if (attackText != null)
             attackText.text = cardData.Attack.ToString();

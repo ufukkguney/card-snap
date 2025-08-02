@@ -1,23 +1,30 @@
 using UnityEngine;
 
+public enum CardType
+{
+    Monster,
+    Spell,
+    Trap
+}
+
 [System.Serializable]
 public struct CardData
 {
-    [SerializeField] private string cardName;
+    [SerializeField] private CardType cardType;
     [SerializeField] private int attack;
     [SerializeField] private int defense;
 
-    public CardData(string name, int attackValue, int defenseValue)
+    public CardData(CardType type, int attackValue, int defenseValue)
     {
-        cardName = name;
+        cardType = type;
         attack = attackValue;
         defense = defenseValue;
     }
 
-    public string CardName
+    public CardType CardType
     {
-        get { return cardName; }
-        set { cardName = value; }
+        get { return cardType; }
+        set { cardType = value; }
     }
 
     public int Attack
@@ -34,6 +41,6 @@ public struct CardData
 
     public override string ToString()
     {
-        return $"Card: {cardName}, Attack: {attack}, Defense: {defense}";
+        return $"Card: {cardType}, Attack: {attack}, Defense: {defense}";
     }
 }

@@ -17,9 +17,9 @@ public class CardSO : ScriptableObject
         cards.Add(cardData);
     }
     
-    public void AddCard(string name, int attack, int defense)
+    public void AddCard(CardType type, int attack, int defense)
     {
-        cards.Add(new CardData(name, attack, defense));
+        cards.Add(new CardData(type, attack, defense));
     }
     
     public bool RemoveCard(CardData cardData)
@@ -27,10 +27,10 @@ public class CardSO : ScriptableObject
         return cards.Remove(cardData);
     }
     
-    public bool RemoveCardByName(string cardName)
+    public bool RemoveCardByType(CardType cardType)
     {
-        var cardToRemove = cards.FirstOrDefault(card => card.CardName == cardName);
-        if (!string.IsNullOrEmpty(cardToRemove.CardName))
+        var cardToRemove = cards.FirstOrDefault(card => card.CardType == cardType);
+        if (cardToRemove.CardType != default(CardType))
         {
             return cards.Remove(cardToRemove);
         }
@@ -94,8 +94,7 @@ public class CardSO : ScriptableObject
     {
         if (cards != null)
         {
-            var distinctCards = cards.GroupBy(card => card.CardName)
-                                   .Where(g => !string.IsNullOrEmpty(g.Key))
+            var distinctCards = cards.GroupBy(card => card.CardType)
                                    .Select(g => g.First())
                                    .ToList();
             

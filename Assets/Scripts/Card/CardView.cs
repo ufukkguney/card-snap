@@ -33,7 +33,7 @@ public class CardView : BaseCardView, IPointerEnterHandler, IPointerExitHandler,
     protected override void UpdateUI()
     {
         if (cardNameText != null)
-            cardNameText.text = cardData.CardName;
+            cardNameText.text = cardData.CardType.ToString();
             
         if (attackText != null)
             attackText.text = cardData.Attack.ToString();
