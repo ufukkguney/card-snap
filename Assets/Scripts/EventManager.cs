@@ -48,19 +48,6 @@ public class EventManager
     public void PublishCardClicked(BaseCardView cardView, CardData cardData) 
         => Publish(new CardEvents.Clicked(cardView, cardData));
     
-    public void PublishCardSelectionChanged(CardData cardData, bool isSelected, int totalCount) 
-        => Publish(new CardEvents.SelectionChanged(cardData, isSelected, totalCount));
-    
-    public void PublishAllSelectionsCleared(List<CardData> previouslySelected) 
-        => Publish(new CardEvents.AllSelectionsCleared(previouslySelected));
-    
-    public void PublishMaxSelectionReached(int maxSelections, CardData attemptedCard) 
-        => Publish(new CardEvents.MaxSelectionReached(maxSelections, attemptedCard));
-    
-    // Deck event publishers
-    public void PublishDeckInitialized(int deckSize, List<CardData> deckCards) 
-        => Publish(new DeckEvents.Initialized(deckSize, deckCards));
-    
     
     public void ClearAllListeners()
     {

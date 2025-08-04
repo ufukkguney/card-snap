@@ -10,17 +10,15 @@ public class Deck
     private List<CardData> selectedCards = new List<CardData>();
 
     private CardSO cardSO;
-    private EventManager eventManager;
 
     public List<CardData> DeckCards => deckCards;
     public List<CardData> SelectedCards => selectedCards;
     public int DeckSize => deckSize;
     public int SelectedCardCount => selectedCards.Count;
 
-    public Deck(CardSO cardSO = null, EventManager eventManager = null)
+    public Deck(CardSO cardSO = null)
     {
         this.cardSO = cardSO;
-        this.eventManager = eventManager;
     }
 
     public void InitializeDeck()
@@ -40,8 +38,6 @@ public class Deck
         }
 
         GenerateRandomCards();
-        
-        eventManager?.PublishDeckInitialized(deckSize, deckCards);
     }
 
     private void GenerateRandomCards()

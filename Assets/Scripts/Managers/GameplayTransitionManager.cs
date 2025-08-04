@@ -1,22 +1,19 @@
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameplayTransitionManager
 {
     private readonly DeckConfiguration config;
     private readonly SelectionManager selectionManager;
-    private readonly EventManager eventManager;
     private readonly CardViewFactory cardViewFactory;
 
     public GameplayTransitionManager(
         DeckConfiguration config, 
         SelectionManager selectionManager, 
-        EventManager eventManager,
         CardViewFactory cardViewFactory)
     {
         this.config = config;
         this.selectionManager = selectionManager;
-        this.eventManager = eventManager;
         this.cardViewFactory = cardViewFactory;
     }
 
@@ -51,7 +48,6 @@ public class GameplayTransitionManager
 
     private bool CanStartGameplay()
     {
-        // Temel kontroller
         if (!selectionManager.IsMaxReached || 
             config.deckAreaParent == null || 
             config.gameplayAreaParent == null)
@@ -59,7 +55,6 @@ public class GameplayTransitionManager
             return false;
         }
 
-        // GameplayConfiguration kontrolü
         if (config.gameplayConfig != null && !config.gameplayConfig.ArePositionsValid())
         {
             Debug.LogWarning("GameplayConfiguration has invalid positions - will use fallback method");
@@ -90,26 +85,11 @@ public class GameplayTransitionManager
         Debug.Log("UI transitioned to deck selection mode");
     }
 
-    private async System.Threading.Tasks.Task CreateGameplay3DCards()
+    private async Task CreateGameplay3DCards()
     {
         var selectedCards = selectionManager.SelectedCards;
         if (selectedCards.Count == 0) return;
 
-        // GameplayConfiguration kontrolü
-        if (config.gameplayConfig == null || !config.gameplayConfig.ArePositionsValid())
-        {
-            Debug.LogError("Invalid gameplay configuration - falling back to parent-based creation");
-            
-            // Fallback: Normal parent-based creation
-            var fallbackCards = await cardViewFactory.CreateCard3DViewsAsync(
-                selectedCards, 
-                config.gameplayAreaParent
-            );
-            Debug.Log($"Created {fallbackCards.Count} 3D cards using fallback method");
-            return;
-        }
-
-        // Position-based creation ile gelişmiş instantiation
         var card3DViews = await cardViewFactory.CreateCard3DViewsAtPositionsAsync(
             selectedCards, 
             config.gameplayConfig

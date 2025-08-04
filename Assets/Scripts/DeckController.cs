@@ -24,17 +24,14 @@ public class DeckController : MonoBehaviour
 
     public void Initialize()
     {
-        deck = new Deck(cardSO, eventManager);
+        deck = new Deck(cardSO);
         deck?.InitializeDeck();
 
-        selectionManager = new SelectionManager(deck, eventManager, deckConfig);
+        selectionManager = new SelectionManager(deck, deckConfig);
         uiManager = new SelectionUIManager(deckConfig);
-        gameplayTransitionManager = new GameplayTransitionManager(deckConfig, selectionManager, eventManager, cardViewFactory);
+        gameplayTransitionManager = new GameplayTransitionManager(deckConfig, selectionManager, cardViewFactory);
         
-        if (deckConfig.StartButton != null)
-        {
-            deckConfig.StartButton.onClick.AddListener(() => gameplayTransitionManager.StartGameplay());
-        }
+        deckConfig?.StartButton.onClick.AddListener(() => gameplayTransitionManager.StartGameplay());
         
         eventManager.Subscribe<CardEvents.Clicked>(OnCardClicked);
         _ = CreateCardViewsAsync();
@@ -44,16 +41,13 @@ public class DeckController : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Event subscription cleanup
         eventManager?.Unsubscribe<CardEvents.Clicked>(OnCardClicked);
         
-        // Button event cleanup
         if (deckConfig?.StartButton != null)
         {
             deckConfig.StartButton.onClick.RemoveAllListeners();
         }
         
-        // Card views cleanup
         cardViewFactory?.DestroyCardViews(instantiatedCardViews.Cast<BaseCardView>().ToList());
         cardViewFactory?.Cleanup();
         instantiatedCardViews.Clear();

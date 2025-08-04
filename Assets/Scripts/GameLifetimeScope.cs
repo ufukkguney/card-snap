@@ -7,10 +7,6 @@ public class GameLifetimeScope : LifetimeScope
     [Header("Dependencies")]
     [SerializeField] private CardSO cardSO;
     
-    [Header("Transform References")]
-    [SerializeField] private Transform cardParent;
-    [SerializeField] private Transform selectedCardsParent;
-    
     protected override void Configure(IContainerBuilder builder)
     {
         builder.RegisterEntryPoint<GameInitializer>();
@@ -21,10 +17,8 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<CardViewFactory>(Lifetime.Singleton);
         
         // MonoBehaviour injection support
-        builder.RegisterComponentInHierarchy<DeckController>(); // MonoBehaviour oldu
+        builder.RegisterComponentInHierarchy<DeckController>();
         
         builder.RegisterInstance(cardSO);
-        if (cardParent != null)
-            builder.RegisterInstance(cardParent);
     }
 }

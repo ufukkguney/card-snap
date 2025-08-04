@@ -17,14 +17,12 @@ public class CardUIView : BaseCardView, IPointerClickHandler
     public void Initialize()
     {
         UpdateUI();
-        UpdateVisuals();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         Debug.Log($"Card clicked: {cardData.CardType} (ATK: {cardData.Attack}, DEF: {cardData.Defense})");
         
-        // EventManager üzerinden card click event'ini publish et
         eventManager?.PublishCardClicked(this, cardData);
     }
     
@@ -39,21 +37,4 @@ public class CardUIView : BaseCardView, IPointerClickHandler
         if (defenseText != null)
             defenseText.text = cardData.Defense.ToString();
     }
-    
-    protected override void UpdateVisuals()
-    {
-        if (cardImage != null)
-        {
-            cardImage.color = GetCurrentColor();
-        }
-    }
-    
-    public override void HighlightCard(bool highlight)
-    {
-        if (cardImage != null)
-        {
-            cardImage.color = highlight ? Color.green : GetCurrentColor();
-        }
-    }
-    
 }

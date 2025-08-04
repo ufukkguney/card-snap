@@ -4,13 +4,11 @@ using System.Linq;
 public class SelectionManager
 {
     private readonly Deck deck;
-    private readonly EventManager eventManager;
     private readonly DeckConfiguration config;
 
-    public SelectionManager(Deck deck, EventManager eventManager, DeckConfiguration config)
+    public SelectionManager(Deck deck, DeckConfiguration config)
     {
         this.deck = deck;
-        this.eventManager = eventManager;
         this.config = config;
     }
 
@@ -18,7 +16,6 @@ public class SelectionManager
     {
         if (GetSelectedCount() >= config.maxSelectedCards)
         {
-            eventManager.PublishMaxSelectionReached(config.maxSelectedCards, cardData);
             return false;
         }
 
@@ -26,7 +23,6 @@ public class SelectionManager
             return false;
 
         deck.AddSelectedCard(cardData);
-        eventManager.PublishCardSelectionChanged(cardData, true, GetSelectedCount());
         return true;
     }
 
@@ -35,7 +31,6 @@ public class SelectionManager
         if (!IsCardSelected(cardData)) return false;
 
         deck.RemoveSelectedCard(cardData);
-        eventManager.PublishCardSelectionChanged(cardData, false, GetSelectedCount());
         return true;
     }
 
@@ -43,7 +38,6 @@ public class SelectionManager
     {
         var selectedCards = deck.SelectedCards.ToList();
         deck.ClearSelectedCards();
-        eventManager.PublishAllSelectionsCleared(selectedCards);
     }
 
     public bool IsCardSelected(CardData cardData) => deck?.SelectedCards.Contains(cardData) ?? false;

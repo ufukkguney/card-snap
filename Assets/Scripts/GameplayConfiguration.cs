@@ -15,14 +15,8 @@ public class GameplayConfiguration
     [SerializeField] public GameObject cardPlacementEffect;
     [SerializeField] public AudioClip cardPlacementSound;
     
-    /// <summary>
-    /// Maksimum yerleştirilebilir kart sayısını döndürür
-    /// </summary>
     public int MaxGameplayCards => cardPositions?.Count ?? 0;
     
-    /// <summary>
-    /// Belirtilen index'teki pozisyonu döndürür
-    /// </summary>
     public Transform GetCardPosition(int index)
     {
         if (cardPositions == null || index < 0 || index >= cardPositions.Count)
@@ -31,9 +25,6 @@ public class GameplayConfiguration
         return cardPositions[index];
     }
     
-    /// <summary>
-    /// Tüm pozisyonların geçerli olup olmadığını kontrol eder
-    /// </summary>
     public bool ArePositionsValid()
     {
         if (cardPositions == null || cardPositions.Count == 0)

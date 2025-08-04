@@ -5,11 +5,6 @@ public abstract class BaseCardView : MonoBehaviour
     [Header("Card Data")]
     [SerializeField] protected CardData cardData;
     
-    [Header("Visual Settings")]
-    [SerializeField] protected Color normalColor = Color.white;
-    [SerializeField] protected Color selectedColor = Color.yellow;
-    [SerializeField] protected Color hoveredColor = Color.cyan;
-    
     protected bool isSelected = false;
     protected bool isHovered = false;
     
@@ -30,13 +25,11 @@ public abstract class BaseCardView : MonoBehaviour
         set 
         { 
             isSelected = value;
-            UpdateVisuals();
         }
     }
     protected virtual void Start()
     {
         UpdateUI();
-        UpdateVisuals();
     }
     
     public void SetCardData(CardData newData)
@@ -54,23 +47,6 @@ public abstract class BaseCardView : MonoBehaviour
         Debug.Log($"Playing card: {cardData.CardType} (ATK: {cardData.Attack}, DEF: {cardData.Defense})");
     }
     
-    public abstract void HighlightCard(bool highlight);
-    
-    protected Color GetCurrentColor()
-    {
-        if (isSelected) return selectedColor;
-        if (isHovered) return hoveredColor;
-        return normalColor;
-    }
-    
     protected abstract void UpdateUI();
-    protected abstract void UpdateVisuals();
     
-    protected virtual void OnValidate()
-    {
-        if (Application.isPlaying)
-        {
-            UpdateUI();
-        }
-    }
 }
