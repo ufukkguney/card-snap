@@ -9,6 +9,7 @@ public class CardDragHandler : MonoBehaviour
     [SerializeField] private float dragSmoothness = 10f;
     [SerializeField] private LayerMask groundLayer = 1;
     [SerializeField] private float hoverHeight = 0.5f;
+    [SerializeField] private float targetRadius = 1f;
     
     private bool isDragging;
     private Vector3 dragOffset;
@@ -72,8 +73,26 @@ public class CardDragHandler : MonoBehaviour
     private Vector3 GetMouseWorldPosition() 
         => MouseUtilities.GetMouseWorldPosition(mainCamera, transform);
     
-    private Vector3 GetValidDropPosition() 
-        => MouseUtilities.GetValidDropPosition(mainCamera, groundLayer, originalPosition);
+    private Vector3 GetValidDropPosition()
+    {
+        Vector3 mousePos = GetMouseWorldPosition();
+        
+        // Check for drop targets first (all layers)
+        Collider2D[] targets = Physics2D.OverlapCircleAll(mousePos, targetRadius);
+        
+        // Find targets with DropTarget component
+        foreach (var target in targets)
+        {
+            if (target.GetComponent<DropTarget>() != null)
+            {
+                Debug.Log($"Found drop target: {target.name} at {target.transform.position}");
+                return target.transform.position;
+            }
+        }
+        
+        // Fallback to ground detection
+        return MouseUtilities.GetValidDropPosition(mainCamera, groundLayer, originalPosition);
+    }
     
     private void MoveTo(Vector3 targetPosition, float duration, Action onUpdate = null)
     {

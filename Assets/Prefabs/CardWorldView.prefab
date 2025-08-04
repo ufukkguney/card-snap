@@ -333,6 +333,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   hoverHeight: 0.5
+  targetRadius: 1
 --- !u!114 &740394604396283296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,14 +350,10 @@ MonoBehaviour:
     cardType: 0
     attack: 0
     defense: 0
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  hoveredColor: {r: 0, g: 1, b: 1, a: 1}
   cardNameText: {fileID: 3267032455043063013}
   attackText: {fileID: 8180296487857295525}
   defenseText: {fileID: 4771150489014063533}
   cardSprite: {fileID: 0}
-  dragHandler: {fileID: 0}
 --- !u!1 &6645402027467773193
 GameObject:
   m_ObjectHideFlags: 0
