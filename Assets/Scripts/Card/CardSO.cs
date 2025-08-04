@@ -89,19 +89,4 @@ public class CardSO : ScriptableObject
             Debug.Log($"{i}: {cards[i].ToString()}");
         }
     }
-    
-    private void OnValidate()
-    {
-        if (cards != null)
-        {
-            var distinctCards = cards.GroupBy(card => card.CardType)
-                                   .Select(g => g.First())
-                                   .ToList();
-            
-            if (distinctCards.Count != cards.Count && cards.Count > 0)
-            {
-                Debug.LogWarning($"Duplicate cards detected in {name}. Consider removing duplicates.");
-            }
-        }
-    }
 }

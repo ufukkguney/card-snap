@@ -13,9 +13,33 @@ MonoBehaviour:
   m_Name: CardSO
   m_EditorClassIdentifier: 
   cards:
-  - cardName: messi
+  - cardType: 0
     attack: 100
     defense: 70
-  - cardName: ronaldo
+  - cardType: 1
+    attack: 99
+    defense: 75
+  - cardType: 2
+    attack: 99
+    defense: 75
+  - cardType: 3
+    attack: 99
+    defense: 75
+  - cardType: 4
+    attack: 99
+    defense: 75
+  - cardType: 5
+    attack: 99
+    defense: 75
+  - cardType: 6
+    attack: 99
+    defense: 75
+  - cardType: 7
+    attack: 99
+    defense: 75
+  - cardType: 8
+    attack: 99
+    defense: 75
+  - cardType: 9
     attack: 99
     defense: 75

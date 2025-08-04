@@ -63,16 +63,8 @@ public abstract class BaseCardView : MonoBehaviour
         return normalColor;
     }
     
-    protected virtual void OnCardClicked()
-    {
-        Debug.Log($"Card clicked: {cardData.CardType}");
-        IsSelected = !IsSelected;
-        NotifyCardClicked();
-    }
-    
     protected abstract void UpdateUI();
     protected abstract void UpdateVisuals();
-    protected abstract void NotifyCardClicked();
     
     protected virtual void OnValidate()
     {

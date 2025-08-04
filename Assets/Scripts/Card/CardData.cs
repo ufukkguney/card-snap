@@ -1,12 +1,5 @@
 using UnityEngine;
 
-public enum CardType
-{
-    Monster,
-    Spell,
-    Trap
-}
-
 [System.Serializable]
 public struct CardData
 {
@@ -43,4 +36,18 @@ public struct CardData
     {
         return $"Card: {cardType}, Attack: {attack}, Defense: {defense}";
     }
+}
+
+public enum CardType
+{
+    Messi,
+    Ronaldo,
+    Neymar,
+    Mbappe,
+    Hazard,
+    Salah,
+    Lewandowski,
+    Kane,
+    DeBruyne,
+    ArdaTuran
 }

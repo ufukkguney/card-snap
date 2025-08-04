@@ -15,10 +15,6 @@ public class Card3DView : BaseCardView
     
     private BoxCollider2D cardCollider;
     
-    public System.Action<Card3DView> CardClicked;
-    public System.Action<Card3DView> CardDragStarted;
-    public System.Action<Card3DView> CardDragEnded;
-    public System.Action<Card3DView, Vector3> CardDragging;
     
     protected override void Start()
     {
@@ -40,10 +36,6 @@ public class Card3DView : BaseCardView
         {
             dragHandler.StartDragging();
         }
-        else
-        {
-            OnCardClicked();
-        }
     }
     
     private void OnMouseDrag()
@@ -51,6 +43,7 @@ public class Card3DView : BaseCardView
         if (dragHandler != null && dragHandler.IsCurrentlyDragging)
         {
             dragHandler.UpdateDragPosition();
+            
         }
     }
     
@@ -90,11 +83,6 @@ public class Card3DView : BaseCardView
         }
     }
     
-    protected override void NotifyCardClicked()
-    {
-        CardClicked?.Invoke(this);
-    }
-    
     public void SetDraggable(bool draggable)
     {
         if (dragHandler != null)
@@ -122,4 +110,5 @@ public class Card3DView : BaseCardView
     {
        
     }
+
 }

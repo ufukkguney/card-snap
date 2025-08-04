@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "card-game.sln"
+    "dotnet.defaultSolution": "card-snap.sln"
 }

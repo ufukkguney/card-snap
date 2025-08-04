@@ -2,32 +2,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using VContainer;
 
-public class CardView : BaseCardView, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class CardUIView : BaseCardView, IPointerClickHandler
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI attackText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private Image cardImage;
-    
-    public System.Action<CardView> CardClicked;
-    
-    public void OnPointerEnter(PointerEventData eventData)
+
+    [Inject] private EventManager eventManager;
+
+    public void Initialize()
     {
-        isHovered = true;
+        UpdateUI();
         UpdateVisuals();
     }
-    
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        isHovered = false;
-        UpdateVisuals();
-    }
-    
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnCardClicked();
+        Debug.Log($"Card clicked: {cardData.CardType} (ATK: {cardData.Attack}, DEF: {cardData.Defense})");
+        
+        // EventManager üzerinden card click event'ini publish et
+        eventManager?.PublishCardClicked(this, cardData);
     }
     
     protected override void UpdateUI()
@@ -58,8 +56,4 @@ public class CardView : BaseCardView, IPointerEnterHandler, IPointerExitHandler,
         }
     }
     
-    protected override void NotifyCardClicked()
-    {
-        CardClicked?.Invoke(this);
-    }
 }

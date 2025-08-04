@@ -1,14 +1,12 @@
+using VContainer;
 using VContainer.Unity;
 
 internal class GameInitializer : IStartable
 {
-
-    public GameInitializer()
-    {
-    }
+    [Inject] private DeckController deckController;
 
     public void Start()
     {
-        
+        deckController.Initialize();
     }
 }
