@@ -16,7 +16,6 @@ public class CardDragHandler : MonoBehaviour
     private Camera mainCamera;
     private Tween dragTween;
     
-    // Properties
     public bool IsDraggable { get => isDraggable; set => isDraggable = value; }
     public bool IsCurrentlyDragging => isDragging;
     public Vector3 OriginalPosition => originalPosition;

@@ -21,6 +21,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df147366b2a3d4a4fb45671a0132a727
+    m_Address: Assets/Prefabs/CardWorldPlace.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 591a2720609da7c40aeda1ccb7295a89, type: 2}
   m_SchemaSet:

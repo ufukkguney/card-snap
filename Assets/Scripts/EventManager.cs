@@ -61,6 +61,7 @@ public class EventManager
     public void PublishDeckInitialized(int deckSize, List<CardData> deckCards) 
         => Publish(new DeckEvents.Initialized(deckSize, deckCards));
     
+    
     public void ClearAllListeners()
     {
         var totalCleared = eventListeners.Values.Sum(list => list.Count);
