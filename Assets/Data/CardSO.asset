@@ -18,28 +18,28 @@ MonoBehaviour:
     defense: 70
   - cardType: 1
     attack: 99
-    defense: 75
+    defense: 80
   - cardType: 2
-    attack: 99
-    defense: 75
+    attack: 80
+    defense: 50
   - cardType: 3
-    attack: 99
-    defense: 75
+    attack: 44
+    defense: 50
   - cardType: 4
-    attack: 99
-    defense: 75
+    attack: 60
+    defense: 55
   - cardType: 5
-    attack: 99
+    attack: 85
     defense: 75
   - cardType: 6
-    attack: 99
-    defense: 75
+    attack: 77
+    defense: 22
   - cardType: 7
-    attack: 99
-    defense: 75
+    attack: 66
+    defense: 25
   - cardType: 8
-    attack: 99
-    defense: 75
+    attack: 90
+    defense: 80
   - cardType: 9
-    attack: 99
-    defense: 75
+    attack: 98
+    defense: 90
