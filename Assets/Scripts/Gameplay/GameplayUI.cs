@@ -8,6 +8,7 @@ public class GameplayUI : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Button useSkillButton;
     [SerializeField] private Button endTurnButton;
+    [SerializeField] private Button retryButton;
     [SerializeField] private TextMeshProUGUI playerHealthText;
     [SerializeField] private TextMeshProUGUI aiHealthText;
     [SerializeField] private TextMeshProUGUI gameFinishedText;
@@ -23,6 +24,7 @@ public class GameplayUI : MonoBehaviour
     {
         useSkillButton?.onClick.AddListener(() => eventManager?.Publish(new GameplayEvents.UseSkillRequested()));
         endTurnButton?.onClick.AddListener(() => eventManager?.Publish(new GameplayEvents.EndTurnRequested()));
+        retryButton?.onClick.AddListener(() => eventManager?.Publish(new GameplayEvents.RetryGameRequested()));
     }
 
     public void UpdateHealthDisplay(int playerHealth, int aiHealth)
@@ -35,6 +37,7 @@ public class GameplayUI : MonoBehaviour
     {
         useSkillButton?.onClick.RemoveAllListeners();
         endTurnButton?.onClick.RemoveAllListeners();
+        retryButton?.onClick.RemoveAllListeners();
     }
     
     public void ShowGameFinishedPanel(string message)
@@ -43,6 +46,14 @@ public class GameplayUI : MonoBehaviour
         {
             gameFinishedPanel.SetActive(true);
             gameFinishedText.text = message;
+        }
+    }
+    
+    public void HideGameFinishedPanel()
+    {
+        if (gameFinishedPanel != null)
+        {
+            gameFinishedPanel.SetActive(false);
         }
     }
 }

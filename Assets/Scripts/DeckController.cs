@@ -30,11 +30,13 @@ public class DeckController : MonoBehaviour
 
         selectionManager = new SelectionManager(deck, deckConfig);
         uiManager = new SelectionUIManager(deckConfig);
-        gameplayTransitionManager = new GameplayTransitionManager(deckConfig, gamePlayController.gameplayConfig, selectionManager, cardViewFactory);
+        gameplayTransitionManager = new GameplayTransitionManager(deckConfig, gamePlayController.gameplayConfig, selectionManager, cardViewFactory, eventManager);
 
         deckConfig?.StartButton.onClick.AddListener(() => gameplayTransitionManager.StartGameplay());
         
         eventManager.Subscribe<CardEvents.Clicked>(OnCardClicked);
+        eventManager.Subscribe<GameplayEvents.ResetDeckRequested>(OnResetDeckRequested);
+        eventManager.Subscribe<GameplayEvents.ReturnToDeckSelectionRequested>(OnReturnToDeckSelectionRequested);
         _ = CreateCardViewsAsync();
 
         Debug.Log("DeckController initialized successfully");
@@ -43,6 +45,8 @@ public class DeckController : MonoBehaviour
     private void OnDestroy()
     {
         eventManager?.Unsubscribe<CardEvents.Clicked>(OnCardClicked);
+        eventManager?.Unsubscribe<GameplayEvents.ResetDeckRequested>(OnResetDeckRequested);
+        eventManager?.Unsubscribe<GameplayEvents.ReturnToDeckSelectionRequested>(OnReturnToDeckSelectionRequested);
         
         if (deckConfig?.StartButton != null)
         {
@@ -78,6 +82,18 @@ public class DeckController : MonoBehaviour
     private void OnCardClicked(CardEvents.Clicked eventArgs)
         => ToggleCardSelection(eventArgs.CardData);
 
+    private void OnResetDeckRequested(GameplayEvents.ResetDeckRequested evt)
+    {
+        Debug.Log("Deck reset requested via event");
+        ResetDeckState();
+    }
+
+    private void OnReturnToDeckSelectionRequested(GameplayEvents.ReturnToDeckSelectionRequested evt)
+    {
+        Debug.Log("Return to deck selection requested via event");
+        ReturnToDeckSelection();
+    }
+
     public void ToggleCardSelection(CardData cardData)
     {
         if (selectionManager.IsCardSelected(cardData))
@@ -109,6 +125,30 @@ public class DeckController : MonoBehaviour
         selectionManager?.ClearAllSelections();
         transformManager?.UpdateAllCardSelections(selectionManager);
         uiManager?.UpdateStartButton(selectionManager);
+
+        cardViewFactory?.DestroyCardViews(instantiatedCardViews.Cast<BaseCardView>().ToList());
+        cardViewFactory?.Cleanup();
+        instantiatedCardViews.Clear();
+    }
+    
+    public void ResetDeckState()
+    {
+        ClearAllSelections();
+
+        deck?.ResetDeck();
+
+        transformManager?.UpdateAllCardSelections(selectionManager);
+        uiManager?.UpdateStartButton(selectionManager);
+
+        _ = CreateCardViewsAsync();
+
+        Debug.Log("Deck state reset to initial values");
+    }
+
+    public void ReturnToDeckSelection()
+    {
+        gameplayTransitionManager?.ReturnToDeckSelection();
+        Debug.Log("Returned to deck selection from DeckController");
     }
 
     public bool IsCardSelected(CardData cardData) => selectionManager?.IsCardSelected(cardData) ?? false;

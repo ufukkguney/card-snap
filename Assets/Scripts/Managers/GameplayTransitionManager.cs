@@ -5,19 +5,22 @@ public class GameplayTransitionManager
 {
     private readonly DeckConfiguration config;
     private readonly SelectionManager selectionManager;
-    private readonly CardViewFactory cardViewFactory;
     private readonly GameplayConfiguration gameplayConfig;
+    private readonly EventManager eventManager;
 
     public GameplayTransitionManager(
         DeckConfiguration config,
         GameplayConfiguration gameplayConfig,
         SelectionManager selectionManager,
-        CardViewFactory cardViewFactory)
+        CardViewFactory cardViewFactory,
+        EventManager eventManager)
     {
         this.config = config;
         this.gameplayConfig = gameplayConfig;
         this.selectionManager = selectionManager;
-        this.cardViewFactory = cardViewFactory;
+        this.eventManager = eventManager;
+        // Note: CardViewFactory kept in constructor for backward compatibility
+        // but not stored as it's now handled by GamePlayController via events
     }
 
     public async void StartGameplay()
@@ -91,13 +94,16 @@ public class GameplayTransitionManager
     private async Task CreateGameplay3DCards()
     {
         var selectedCards = selectionManager.SelectedCards;
-        if (selectedCards.Count == 0) return;
+        if (selectedCards.Count == 0) 
+        {
+            Debug.LogWarning("No selected cards found for gameplay");
+            return;
+        }
 
-        var card3DViews = await cardViewFactory.CreateCard3DViewsAtPositionsAsync(
-            selectedCards, 
-            gameplayConfig
-        );
-
-        Debug.Log($"Created {card3DViews.Count} 3D cards at designated positions");
+        // Request card creation via event system
+        eventManager?.Publish(new GameplayEvents.CreateGameplay3DCardsRequested(selectedCards));
+        
+        // Small delay to allow event processing
+        await Task.Delay(100);
     }
 }
