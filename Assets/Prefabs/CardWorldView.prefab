@@ -329,11 +329,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDraggable: 1
   dragSmoothness: 10
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 1
   hoverHeight: 0.5
   targetRadius: 1
+  card3DView: {fileID: 0}
 --- !u!114 &740394604396283296
 MonoBehaviour:
   m_ObjectHideFlags: 0

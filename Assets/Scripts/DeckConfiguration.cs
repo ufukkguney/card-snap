@@ -17,6 +17,6 @@ public class DeckConfiguration
     [Header("UI References")]
     public Button StartButton; // Max selection'da aktif olacak button
     
-    [Header("Gameplay Configuration")]
-    public GameplayConfiguration gameplayConfig;
+    // [Header("Gameplay Configuration")]
+    // public GameplayConfiguration gameplayConfig;
 }

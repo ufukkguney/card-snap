@@ -54,13 +54,13 @@ public class Card3DView : BaseCardView
 
     #endregion
 
-    #region Private Methods
 
     private void InitializeComponents()
     {
         dragHandler = GetComponent<CardDragHandler>();
         cardCollider = GetComponent<BoxCollider2D>();
         
+        dragHandler.Initialize(this);
         ValidateComponents();
     }
 
@@ -100,5 +100,4 @@ public class Card3DView : BaseCardView
             textComponent.text = value;
     }
 
-    #endregion
 }

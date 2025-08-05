@@ -17,27 +17,5 @@ public static class DeckEvents
         }
     }
     
-    [System.Serializable]
-    public struct Reset : EventManager.IGameEvent
-    {
-        public int NewDeckSize { get; }
-        
-        public Reset(int newDeckSize)
-        {
-            NewDeckSize = newDeckSize;
-        }
-    }
-    
-    [System.Serializable]
-    public struct Empty : EventManager.IGameEvent
-    {
-        public int LastCardCount { get; }
-        
-        public Empty(int lastCardCount)
-        {
-            LastCardCount = lastCardCount;
-        }
-    }
-    
     #endregion
 }

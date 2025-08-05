@@ -10,6 +10,7 @@ public class DeckController : MonoBehaviour
     [Inject] private CardSO cardSO;
     [Inject] private EventManager eventManager;
     [Inject] private CardViewFactory cardViewFactory;
+    [Inject] private GamePlayController gamePlayController;
 
     [Header("Deck Configuration")]
     [SerializeField] private DeckConfiguration deckConfig;
@@ -29,8 +30,8 @@ public class DeckController : MonoBehaviour
 
         selectionManager = new SelectionManager(deck, deckConfig);
         uiManager = new SelectionUIManager(deckConfig);
-        gameplayTransitionManager = new GameplayTransitionManager(deckConfig, selectionManager, cardViewFactory);
-        
+        gameplayTransitionManager = new GameplayTransitionManager(deckConfig, gamePlayController.gameplayConfig, selectionManager, cardViewFactory);
+
         deckConfig?.StartButton.onClick.AddListener(() => gameplayTransitionManager.StartGameplay());
         
         eventManager.Subscribe<CardEvents.Clicked>(OnCardClicked);

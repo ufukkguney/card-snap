@@ -7,7 +7,6 @@ public class CardDragHandler : MonoBehaviour
     [Header("Drag Settings")]
     [SerializeField] private bool isDraggable = true;
     [SerializeField] private float dragSmoothness = 10f;
-    [SerializeField] private LayerMask groundLayer = 1;
     [SerializeField] private float hoverHeight = 0.5f;
     [SerializeField] private float targetRadius = 1f;
     
@@ -20,9 +19,12 @@ public class CardDragHandler : MonoBehaviour
     public bool IsDraggable { get => isDraggable; set => isDraggable = value; }
     public bool IsCurrentlyDragging => isDragging;
     public Vector3 OriginalPosition => originalPosition;
+
+    public Card3DView card3DView;
     
-    private void Start()
+    public void Initialize(Card3DView cardView)
     {
+        card3DView = cardView;
         mainCamera = Camera.main;
         originalPosition = transform.position;
     }
@@ -32,7 +34,6 @@ public class CardDragHandler : MonoBehaviour
         if (!CanStartDrag()) return;
         
         isDragging = true;
-        originalPosition = transform.position;
         dragOffset = transform.position - GetMouseWorldPosition();
         
         MoveTo(transform.position + Vector3.up * hoverHeight, 0.1f);
@@ -53,7 +54,8 @@ public class CardDragHandler : MonoBehaviour
         isDragging = false;
         dragTween?.Kill();
         
-        Vector3 dropPosition = GetValidDropPosition();
+        Vector2 dropPosition = GetValidDropPosition();
+        Debug.Log($"Card dropped at: {dropPosition}");
         MoveTo(dropPosition, 1f / dragSmoothness);
     }
     
@@ -73,28 +75,31 @@ public class CardDragHandler : MonoBehaviour
     private Vector3 GetMouseWorldPosition() 
         => MouseUtilities.GetMouseWorldPosition(mainCamera, transform);
     
-    private Vector3 GetValidDropPosition()
+    private Vector2 GetValidDropPosition()
     {
         Vector3 mousePos = GetMouseWorldPosition();
-        
-        // Check for drop targets first (all layers)
         Collider2D[] targets = Physics2D.OverlapCircleAll(mousePos, targetRadius);
         
-        // Find targets with DropTarget component
         foreach (var target in targets)
         {
-            if (target.GetComponent<DropTarget>() != null)
+            DropTarget dropTarget = target.GetComponent<DropTarget>();
+            if (dropTarget != null && dropTarget.CanAcceptCard())
             {
-                Debug.Log($"Found drop target: {target.name} at {target.transform.position}");
+                Debug.Log($"Found valid drop target: {target.name} at {target.transform.position}");
+                
+                if (card3DView != null)
+                {
+                    dropTarget.PlaceCard(card3DView);
+                }
+                
                 return target.transform.position;
             }
         }
-        
-        // Fallback to ground detection
-        return MouseUtilities.GetValidDropPosition(mainCamera, groundLayer, originalPosition);
+        Debug.Log($"No valid drop target found, using original position: {originalPosition}");
+        return MouseUtilities.GetValidDropPosition(mainCamera, originalPosition);
     }
-    
-    private void MoveTo(Vector3 targetPosition, float duration, Action onUpdate = null)
+
+    private void MoveTo(Vector2 targetPosition, float duration, Action onUpdate = null)
     {
         dragTween?.Kill();
         dragTween = transform.DOMove(targetPosition, duration)

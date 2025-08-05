@@ -10,10 +10,8 @@ public class GameplayConfiguration
     [Header("Gameplay Settings")]
     [SerializeField] public float cardInstantiationDelay = 0.2f;
     [SerializeField] public bool animateCardPlacement = true;
-    
-    [Header("Visual Effects")]
-    [SerializeField] public GameObject cardPlacementEffect;
-    [SerializeField] public AudioClip cardPlacementSound;
+   
+   public DropTarget AiDropTarget;
     
     public int MaxGameplayCards => cardPositions?.Count ?? 0;
     

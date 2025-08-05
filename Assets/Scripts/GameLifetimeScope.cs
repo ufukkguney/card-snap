@@ -12,12 +12,16 @@ public class GameLifetimeScope : LifetimeScope
         builder.RegisterEntryPoint<GameInitializer>();
         
         builder.Register<EventManager>(Lifetime.Singleton);
-        builder.Register<TurnBaseManager>(Lifetime.Singleton);
+        builder.Register<AIPlayer>(Lifetime.Singleton);
         
         builder.Register<CardViewFactory>(Lifetime.Singleton);
         
         // MonoBehaviour injection support
         builder.RegisterComponentInHierarchy<DeckController>();
+        builder.RegisterComponentInHierarchy<DropTarget>();
+        builder.RegisterComponentInHierarchy<GameplayUI>();
+        builder.RegisterComponentInHierarchy<GamePlayController>();
+        
         
         builder.RegisterInstance(cardSO);
     }

@@ -63,7 +63,7 @@ public class CardViewFactory
         return CreateInstance<T>(prefab, cardData, parent);
     }
 
-    private async Task<Card3DView> CreateCardAtPosition(CardData cardData, Transform position, GameplayConfiguration config)
+    public async Task<Card3DView> CreateCardAtPosition(CardData cardData, Transform position, GameplayConfiguration config)
     {
         if (position == null)
         {
@@ -110,11 +110,6 @@ public class CardViewFactory
         if (position.parent != null)
             card.transform.SetParent(position.parent);
 
-        if (config.cardPlacementEffect != null)
-            Object.Instantiate(config.cardPlacementEffect, position.position, position.rotation);
-
-        if (config.cardPlacementSound != null)
-            card.GetComponent<AudioSource>()?.PlayOneShot(config.cardPlacementSound);
     }
 
     private async Task<GameObject> LoadAsset(string key)

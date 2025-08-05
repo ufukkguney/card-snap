@@ -9,53 +9,11 @@ public class CardSO : ScriptableObject
     [SerializeField] private List<CardData> cards = new List<CardData>();
     
     public List<CardData> Cards => cards;
-  
     public int CardCount => cards.Count;
-    
-    public void AddCard(CardData cardData)
-    {
-        cards.Add(cardData);
-    }
-    
-    public void AddCard(CardType type, int attack, int defense)
-    {
-        cards.Add(new CardData(type, attack, defense));
-    }
-    
-    public bool RemoveCard(CardData cardData)
-    {
-        return cards.Remove(cardData);
-    }
-    
-    public bool RemoveCardByType(CardType cardType)
-    {
-        var cardToRemove = cards.FirstOrDefault(card => card.CardType == cardType);
-        if (cardToRemove.CardType != default(CardType))
-        {
-            return cards.Remove(cardToRemove);
-        }
-        return false;
-    }
-    
-    public CardData GetCard(int index)
-    {
-        if (index >= 0 && index < cards.Count)
-        {
-            return cards[index];
-        }
-        
-        Debug.LogWarning($"Card index {index} out of range. Collection has {cards.Count} cards.");
-        return default(CardData);
-    }
-    
+   
     public bool ContainsCard(CardData cardData)
     {
         return cards.Contains(cardData);
-    }
-    
-    public void ClearCards()
-    {
-        cards.Clear();
     }
     
     public CardData GetRandomCard()
@@ -82,11 +40,4 @@ public class CardSO : ScriptableObject
         return shuffledCards.Take(count).ToList();
     }
 
-    public void PrintAllCards()
-    {
-        for (int i = 0; i < cards.Count; i++)
-        {
-            Debug.Log($"{i}: {cards[i].ToString()}");
-        }
-    }
 }

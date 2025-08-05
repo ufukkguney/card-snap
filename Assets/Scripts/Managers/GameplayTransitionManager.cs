@@ -6,13 +6,16 @@ public class GameplayTransitionManager
     private readonly DeckConfiguration config;
     private readonly SelectionManager selectionManager;
     private readonly CardViewFactory cardViewFactory;
+    private readonly GameplayConfiguration gameplayConfig;
 
     public GameplayTransitionManager(
-        DeckConfiguration config, 
-        SelectionManager selectionManager, 
+        DeckConfiguration config,
+        GameplayConfiguration gameplayConfig,
+        SelectionManager selectionManager,
         CardViewFactory cardViewFactory)
     {
         this.config = config;
+        this.gameplayConfig = gameplayConfig;
         this.selectionManager = selectionManager;
         this.cardViewFactory = cardViewFactory;
     }
@@ -55,7 +58,7 @@ public class GameplayTransitionManager
             return false;
         }
 
-        if (config.gameplayConfig != null && !config.gameplayConfig.ArePositionsValid())
+        if (gameplayConfig != null && !gameplayConfig.ArePositionsValid())
         {
             Debug.LogWarning("GameplayConfiguration has invalid positions - will use fallback method");
         }
@@ -92,7 +95,7 @@ public class GameplayTransitionManager
 
         var card3DViews = await cardViewFactory.CreateCard3DViewsAtPositionsAsync(
             selectedCards, 
-            config.gameplayConfig
+            gameplayConfig
         );
 
         Debug.Log($"Created {card3DViews.Count} 3D cards at designated positions");
