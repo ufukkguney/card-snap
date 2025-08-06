@@ -14,15 +14,28 @@ public class GamePlayController : MonoBehaviour, IDisposable
     private AIPlayer aiPlayer;
     private GameplayUI gameplayUI;
     private CardViewFactory cardViewFactory;
+    private ISkillService skillService;
     private int playerHealth = 200;
     private int aiPlayerHealth = 200;
+
+    private int PlayerHealth
+    {
+        get => playerHealth;
+        set => playerHealth = Mathf.Max(0, value);
+    }
+
+    private int AiPlayerHealth
+    {
+        get => aiPlayerHealth;
+        set => aiPlayerHealth = Mathf.Max(0, value);
+    }
     private int currentTurn = 0;
     private const int MAX_TURNS = 6;
     
     [Inject]
-    public void Construct(EventManager eventManager, AIPlayer aiPlayer, GameplayUI gameplayUI, CardViewFactory cardViewFactory)
+    public void Construct(EventManager eventManager, AIPlayer aiPlayer, GameplayUI gameplayUI, CardViewFactory cardViewFactory, ISkillService skillService)
     {
-        (this.eventManager, this.aiPlayer, this.gameplayUI, this.cardViewFactory) = (eventManager, aiPlayer, gameplayUI, cardViewFactory);
+        (this.eventManager, this.aiPlayer, this.gameplayUI, this.cardViewFactory, this.skillService) = (eventManager, aiPlayer, gameplayUI, cardViewFactory, skillService);
         SubscribeToEvents();
         UpdateHealthDisplay();
     }
@@ -41,11 +54,24 @@ public class GamePlayController : MonoBehaviour, IDisposable
         eventManager.Subscribe<GameplayEvents.CreateGameplay3DCardsRequested>(OnCreateGameplay3DCardsRequested);
     }
     
-    private void OnUseSkillRequested(GameplayEvents.UseSkillRequested evt) =>
-        Debug.Log("Use Skill Requested");
+    private void OnUseSkillRequested(GameplayEvents.UseSkillRequested evt)
+    {
+        var playerSkill = skillService.GetRandomSkill();
+        var aiSkill = skillService.GetRandomSkill();
+        
+        skillService.ActivateSkill(playerSkill, true);  // Player skill
+        skillService.ActivateSkill(aiSkill, false);     // AI skill
+        
+        gameplayUI?.DisplaySkills(playerSkill.description, aiSkill.description);
+        Debug.Log($"Skills activated - Player: {playerSkill.description}, AI: {aiSkill.description}");
+    }
     
-    private void OnEndTurnRequested(GameplayEvents.EndTurnRequested evt) =>
+    private void OnEndTurnRequested(GameplayEvents.EndTurnRequested evt)
+    {
+        gameplayUI?.SetButtonsInteractable(false);
+        
         _ = CreateAICardAsync();
+    }
     
     private void OnRetryGameRequested(GameplayEvents.RetryGameRequested evt)
     {
@@ -69,15 +95,15 @@ public class GamePlayController : MonoBehaviour, IDisposable
         {
             gameplayConfig.AiDropTarget.PlaceCard(aiCard);
             ProcessBattle(currentPlayerCard, aiCard);
+
             await Task.Delay(3000);
             DestroyBattleCards(currentPlayerCard, aiCard);
-            if(currentTurn >= MAX_TURNS) 
-            {
-                await Task.Delay(1000);
-                CheckGameOver();
-                return;
-            }
-            
+            gameplayUI?.StartTimer();
+            skillService.ResetTurnEffects();
+            gameplayUI?.ClearSkillDisplay();
+            gameplayUI?.SetButtonsInteractable(true);
+
+            CheckGameOver();
         }
     }
     
@@ -85,13 +111,23 @@ public class GamePlayController : MonoBehaviour, IDisposable
     {
         if (playerCard == null || aiCard == null) return;
         
-        var playerDamage = Mathf.Max(0, playerCard.Data.Attack - aiCard.Data.Defense);
-        var aiDamage = Mathf.Max(0, aiCard.Data.Attack - playerCard.Data.Defense);
+        var playerAttack = skillService.GetModifiedAttack(playerCard.Data.Attack, true);
+        var playerDefense = skillService.GetModifiedDefense(playerCard.Data.Defense, true);
+        var aiAttack = skillService.GetModifiedAttack(aiCard.Data.Attack, false);
+        var aiDefense = skillService.GetModifiedDefense(aiCard.Data.Defense, false);
         
-        aiPlayerHealth -= playerDamage;
-        playerHealth -= aiDamage;
+        var playerDamage = Mathf.Max(0, playerAttack - aiDefense);
+        var aiDamage = Mathf.Max(0, aiAttack - playerDefense);
+        
+        skillService.ProcessHealthEffects(ref playerHealth, ref aiDamage, true);
+        skillService.ProcessHealthEffects(ref aiPlayerHealth, ref playerDamage, false);
+        
+        AiPlayerHealth -= playerDamage;
+        PlayerHealth -= aiDamage;
         
         UpdateHealthDisplay();
+        
+        Debug.Log($"Battle: Player dealt {playerDamage} damage, AI dealt {aiDamage} damage");
     }
     
     private void UpdateHealthDisplay() => gameplayUI?.UpdateHealthDisplay(playerHealth, aiPlayerHealth);
@@ -114,7 +150,11 @@ public class GamePlayController : MonoBehaviour, IDisposable
                 sb.Append("DRAW!").AppendLine().Append($"Both have {playerHealth} health after {MAX_TURNS} turns");
         }
         
-        if (sb.Length > 0) gameplayUI?.ShowGameFinishedPanel(sb.ToString());
+        if (sb.Length > 0)
+        {
+            gameplayUI?.ShowGameFinishedPanel(sb.ToString());
+            gameplayUI?.SetButtonsInteractable(false); // Disable buttons when game ends
+        }
     }
     
     private void DestroyBattleCards(Card3DView playerCard, Card3DView aiCard)
@@ -126,12 +166,16 @@ public class GamePlayController : MonoBehaviour, IDisposable
     
     public void ResetGameState()
     {
-        playerHealth = 200;
-        aiPlayerHealth = 200;
+        PlayerHealth = 200;
+        AiPlayerHealth = 200;
         currentTurn = 0;
         currentPlayerCard = null;
         
+        skillService?.ResetTurnEffects();
+        gameplayUI?.ClearSkillDisplay();
         gameplayUI?.HideGameFinishedPanel();
+        gameplayUI?.SetButtonsInteractable(true); // Re-enable buttons on reset
+
         UpdateHealthDisplay();
         
         Debug.Log("GamePlay state reset to initial values");
@@ -148,7 +192,6 @@ public class GamePlayController : MonoBehaviour, IDisposable
         eventManager?.Publish(new GameplayEvents.ReturnToDeckSelectionRequested());
         
         Debug.Log("Complete game reset successful");
-        
     }
     
     private void CleanupGameplayCards()

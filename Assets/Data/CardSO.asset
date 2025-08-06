@@ -33,7 +33,7 @@ MonoBehaviour:
     defense: 75
   - cardType: 6
     attack: 77
-    defense: 22
+    defense: 60
   - cardType: 7
     attack: 66
     defense: 25

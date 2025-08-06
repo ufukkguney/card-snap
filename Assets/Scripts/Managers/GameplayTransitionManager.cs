@@ -31,19 +31,10 @@ public class GameplayTransitionManager
             return;
         }
 
-        try
-        {
-            TransitionToGameplayUI();
-            
-            await CreateGameplay3DCards();
-            
-            Debug.Log("Gameplay transition completed successfully");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Gameplay transition failed: {e.Message}");
-            TransitionToDeckUI();
-        }
+        TransitionToGameplayUI();
+        CreateGameplay3DCards();
+        
+        Debug.Log("Gameplay transition completed successfully");
     }
 
     public void ReturnToDeckSelection()
@@ -91,7 +82,7 @@ public class GameplayTransitionManager
         Debug.Log("UI transitioned to deck selection mode");
     }
 
-    private async Task CreateGameplay3DCards()
+    private void CreateGameplay3DCards()
     {
         var selectedCards = selectionManager.SelectedCards;
         if (selectedCards.Count == 0) 
@@ -104,6 +95,6 @@ public class GameplayTransitionManager
         eventManager?.Publish(new GameplayEvents.CreateGameplay3DCardsRequested(selectedCards));
         
         // Small delay to allow event processing
-        await Task.Delay(100);
+        // await Task.Delay(100);
     }
 }

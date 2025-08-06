@@ -13,6 +13,7 @@ public class GameLifetimeScope : LifetimeScope
         
         builder.Register<EventManager>(Lifetime.Singleton);
         builder.Register<AIPlayer>(Lifetime.Singleton);
+        builder.Register<ISkillService, SkillService>(Lifetime.Singleton);
         
         builder.Register<CardViewFactory>(Lifetime.Singleton);
         
