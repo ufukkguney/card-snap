@@ -10,31 +10,24 @@ public struct CardData
     public CardData(CardType type, int attackValue, int defenseValue)
     {
         cardType = type;
-        attack = attackValue;
-        defense = defenseValue;
+        attack = Mathf.Max(0, attackValue);
+        defense = Mathf.Max(0, defenseValue);
     }
 
-    public CardType CardType
+     public CardType CardType
     {
         get { return cardType; }
         set { cardType = value; }
     }
-
-    public int Attack
-    {
-        get { return attack; }
-        set { attack = value; }
+    public int Attack 
+    { 
+        get => attack; 
+        set => attack = Mathf.Max(0, value); 
     }
-
-    public int Defense
-    {
-        get { return defense; }
-        set { defense = value; }
-    }
-
-    public override string ToString()
-    {
-        return $"Card: {cardType}, Attack: {attack}, Defense: {defense}";
+    public int Defense 
+    { 
+        get => defense; 
+        set => defense = Mathf.Max(0, value); 
     }
 }
 
@@ -46,7 +39,7 @@ public enum CardType
     Mbappe,
     Hazard,
     Salah,
-    Lewandowski,
+    Modric,
     Kane,
     DeBruyne,
     ArdaTuran

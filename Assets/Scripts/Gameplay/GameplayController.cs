@@ -71,6 +71,13 @@ public class GamePlayController : MonoBehaviour, IDisposable
             ProcessBattle(currentPlayerCard, aiCard);
             await Task.Delay(3000);
             DestroyBattleCards(currentPlayerCard, aiCard);
+            if(currentTurn >= MAX_TURNS) 
+            {
+                await Task.Delay(1000);
+                CheckGameOver();
+                return;
+            }
+            
         }
     }
     
@@ -85,14 +92,9 @@ public class GamePlayController : MonoBehaviour, IDisposable
         playerHealth -= aiDamage;
         
         UpdateHealthDisplay();
-        LogBattleResult(playerDamage, aiDamage);
-        CheckGameOver();
     }
     
     private void UpdateHealthDisplay() => gameplayUI?.UpdateHealthDisplay(playerHealth, aiPlayerHealth);
-    
-    private void LogBattleResult(int playerDamage, int aiDamage) =>
-        Debug.Log($"Turn {currentTurn}/{MAX_TURNS} - Battle: Player dealt {playerDamage} | AI dealt {aiDamage} | Health: Player {playerHealth} | AI {aiPlayerHealth}");
     
     private void CheckGameOver()
     {
@@ -122,57 +124,31 @@ public class GamePlayController : MonoBehaviour, IDisposable
         currentPlayerCard = null;
     }
     
-    /// <summary>
-    /// Resets all gameplay state to initial values
-    /// </summary>
     public void ResetGameState()
     {
-        // Reset health values
         playerHealth = 200;
         aiPlayerHealth = 200;
-        
-        // Reset turn counter
         currentTurn = 0;
-        
-        // Clear current player card
         currentPlayerCard = null;
         
-        // Hide game finished panel
         gameplayUI?.HideGameFinishedPanel();
-        
-        // Update health display
         UpdateHealthDisplay();
         
         Debug.Log("GamePlay state reset to initial values");
     }
     
-    /// <summary>
-    /// Performs a complete game reset including deck state and returns to deck selection
-    /// </summary>
     private void PerformCompleteGameReset()
     {
         Debug.Log("Starting complete game reset...");
         
-        try
-        {
-            // Clean up any existing gameplay cards first
-            CleanupGameplayCards();
-            
-            // Reset gameplay state
-            ResetGameState();
-            
-            // Request deck reset via event system
-            eventManager?.Publish(new GameplayEvents.ResetDeckRequested());
-            
-            // Request return to deck selection via event system
-            eventManager?.Publish(new GameplayEvents.ReturnToDeckSelectionRequested());
-            
-            Debug.Log("Complete game reset successful");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Error during complete game reset: {e.Message}");
-        }
+        CleanupGameplayCards();
+        ResetGameState();
+        
+        eventManager?.Publish(new GameplayEvents.ResetDeckRequested());
+        eventManager?.Publish(new GameplayEvents.ReturnToDeckSelectionRequested());
+        
+        Debug.Log("Complete game reset successful");
+        
     }
     
     private void CleanupGameplayCards()
@@ -192,41 +168,14 @@ public class GamePlayController : MonoBehaviour, IDisposable
         Debug.Log("Gameplay cards cleanup completed");
     }
     
-    /// <summary>
-    /// Creates 3D cards for gameplay from selected deck cards
-    /// </summary>
-    /// <param name="selectedCards">List of selected cards to create 3D versions for</param>
-    /// <returns>Task representing the async card creation operation</returns>
     public async Task CreateGameplay3DCards(List<CardData> selectedCards)
     {
-        if (selectedCards == null || selectedCards.Count == 0)
-        {
-            Debug.LogWarning("No selected cards provided for 3D card creation");
-            return;
-        }
+        var card3DViews = await cardViewFactory.CreateCard3DViewsAtPositionsAsync(
+            selectedCards, 
+            gameplayConfig
+        );
 
-        if (gameplayConfig == null || !gameplayConfig.ArePositionsValid())
-        {
-            Debug.LogError("Invalid gameplay configuration - cannot create 3D cards");
-            return;
-        }
-
-        try
-        {
-            Debug.Log($"Creating {selectedCards.Count} 3D cards for gameplay...");
-            
-            var card3DViews = await cardViewFactory.CreateCard3DViewsAtPositionsAsync(
-                selectedCards, 
-                gameplayConfig
-            );
-
-            Debug.Log($"Successfully created {card3DViews.Count} 3D cards at designated positions");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Failed to create gameplay 3D cards: {e.Message}");
-            throw; // Re-throw to allow caller to handle
-        }
+        Debug.Log($"Successfully created {card3DViews.Count} 3D cards at designated positions");
     }
     
     public void Dispose()
