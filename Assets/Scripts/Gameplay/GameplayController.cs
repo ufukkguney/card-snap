@@ -78,11 +78,12 @@ public class GamePlayController : MonoBehaviour, IDisposable
         Debug.Log("Retry game requested - initiating complete reset");
         PerformCompleteGameReset();
     }
-    
+
     private async void OnCreateGameplay3DCardsRequested(GameplayEvents.CreateGameplay3DCardsRequested evt)
     {
         Debug.Log("3D card creation requested via event");
         await CreateGameplay3DCards(evt.SelectedCards);
+        gameplayUI?.StartTimer();
     }
     
     private async Task CreateAICardAsync()

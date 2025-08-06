@@ -27,12 +27,8 @@ public class GameplayUI : MonoBehaviour
     public void Construct(EventManager eventManager)
     {
         this.eventManager = eventManager;
-    }
-
-    private void Start()
-    {
         SetupButtons();
-        StartTimer();
+
     }
 
     private void SetupButtons()
@@ -133,7 +129,7 @@ public class GameplayUI : MonoBehaviour
     {
         eventManager?.Publish(new GameplayEvents.EndTurnRequested());
     }
-    
+
     private void OnDestroy()
     {
         useSkillButton?.onClick.RemoveAllListeners();

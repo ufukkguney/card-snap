@@ -19,11 +19,9 @@ public class GameplayTransitionManager
         this.gameplayConfig = gameplayConfig;
         this.selectionManager = selectionManager;
         this.eventManager = eventManager;
-        // Note: CardViewFactory kept in constructor for backward compatibility
-        // but not stored as it's now handled by GamePlayController via events
     }
 
-    public async void StartGameplay()
+    public void StartGameplay()
     {
         if (!CanStartGameplay())
         {
@@ -32,7 +30,6 @@ public class GameplayTransitionManager
         }
 
         TransitionToGameplayUI();
-        CreateGameplay3DCards();
         
         Debug.Log("Gameplay transition completed successfully");
     }
@@ -64,11 +61,13 @@ public class GameplayTransitionManager
     {
         if (config.deckAreaParent != null)
             config.deckAreaParent.gameObject.SetActive(false);
-        
+
         if (config.gameplayAreaParent != null)
             config.gameplayAreaParent.gameObject.SetActive(true);
-        
+
         Debug.Log("UI transitioned to gameplay mode");
+        
+        CreateGameplay3DCards();
     }
 
     private void TransitionToDeckUI()
@@ -91,10 +90,6 @@ public class GameplayTransitionManager
             return;
         }
 
-        // Request card creation via event system
         eventManager?.Publish(new GameplayEvents.CreateGameplay3DCardsRequested(selectedCards));
-        
-        // Small delay to allow event processing
-        // await Task.Delay(100);
     }
 }
