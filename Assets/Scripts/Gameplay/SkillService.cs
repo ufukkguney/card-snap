@@ -35,21 +35,18 @@ public class SkillService : ISkillService
         
         effects.Clear();
         
-        effects[skill.skillType] = skill.primaryValue;
+        effects[skill.SkillType] = skill.PrimaryValue;
         
-        if (skill.skillType == SkillType.Shield)
+        if (skill.SkillType == SkillType.Shield)
         {
             var opponentNextTurnEffects = isPlayer ? nextTurnAiEffects : nextTurnPlayerEffects;
-            opponentNextTurnEffects[SkillType.ShieldPenalty] = skill.secondaryValue;
-            Debug.Log($"Shield penalty set: {(isPlayer ? "AI" : "Player")} will get +{skill.secondaryValue} attack next turn");
+            opponentNextTurnEffects[SkillType.ShieldPenalty] = skill.SecondaryValue;
         }
         
         if (isPlayer)
             currentPlayerSkill = skill;
         else
             currentAiSkill = skill;
-            
-        Debug.Log($"{(isPlayer ? "Player" : "AI")} activated skill: {skill.description}");
     }
 
     public int GetModifiedAttack(int baseAttack, bool isPlayer)
@@ -68,7 +65,6 @@ public class SkillService : ISkillService
         if (effects.ContainsKey(SkillType.ShieldPenalty))
         {
             modified += effects[SkillType.ShieldPenalty];
-            Debug.Log($"{(isPlayer ? "Player" : "AI")} got shield penalty bonus: +{effects[SkillType.ShieldPenalty]} attack");
         }
             
         return Mathf.Max(0, modified);
@@ -97,7 +93,6 @@ public class SkillService : ISkillService
         if (effects.ContainsKey(SkillType.HealthBoost))
         {
             health += effects[SkillType.HealthBoost];
-            Debug.Log($"{(isPlayer ? "Player" : "AI")} gained {effects[SkillType.HealthBoost]} health");
         }
         
         if (effects.ContainsKey(SkillType.Shield))
@@ -106,8 +101,6 @@ public class SkillService : ISkillService
             int absoredDamage = Mathf.Min(damage, shieldValue);
             damage -= absoredDamage;
             
-            if (absoredDamage > 0)
-                Debug.Log($"{(isPlayer ? "Player" : "AI")} shield absorbed {absoredDamage} damage");
         }
     }
 
@@ -119,13 +112,11 @@ public class SkillService : ISkillService
         foreach(var effect in nextTurnPlayerEffects)
         {
             playerEffects[effect.Key] = effect.Value;
-            Debug.Log($"Applied pending effect to Player: {effect.Key} = {effect.Value}");
         }
         
         foreach(var effect in nextTurnAiEffects)
         {
             aiEffects[effect.Key] = effect.Value;
-            Debug.Log($"Applied pending effect to AI: {effect.Key} = {effect.Value}");
         }
         
         nextTurnPlayerEffects.Clear();
@@ -134,7 +125,6 @@ public class SkillService : ISkillService
         currentPlayerSkill = null;
         currentAiSkill = null;
         
-        Debug.Log("Turn effects reset and pending effects applied");
     }
 
     public SkillConfig? GetCurrentSkill(bool isPlayer)

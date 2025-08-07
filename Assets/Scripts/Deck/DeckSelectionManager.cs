@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using System.Linq;
+using VContainer;
 
-public class SelectionManager
+public class DeckSelectionManager
 {
-    private readonly Deck deck;
-    private readonly DeckConfiguration config;
+    [Inject] private readonly Deck deck;
+    private DeckConfiguration config;
 
-    public SelectionManager(Deck deck, DeckConfiguration config)
+    public void Initialize(DeckConfiguration config)
     {
-        this.deck = deck;
         this.config = config;
     }
 
     public bool TryAddSelection(CardData cardData)
     {
-        if (GetSelectedCount() >= config.maxSelectedCards)
+        if (GetSelectedCount() >= config.MaxSelectedCards)
         {
             return false;
         }
 
-        if (!config.allowDuplicateSelection && IsCardSelected(cardData))
+        if (!config.AllowDuplicateSelection && IsCardSelected(cardData))
             return false;
 
         deck.AddSelectedCard(cardData);
@@ -36,12 +36,11 @@ public class SelectionManager
 
     public void ClearAllSelections()
     {
-        var selectedCards = deck.SelectedCards.ToList();
         deck.ClearSelectedCards();
     }
 
     public bool IsCardSelected(CardData cardData) => deck?.SelectedCards.Contains(cardData) ?? false;
     public int GetSelectedCount() => deck?.SelectedCardCount ?? 0;
-    public bool IsMaxReached => GetSelectedCount() >= config.maxSelectedCards;
+    public bool IsMaxReached => GetSelectedCount() >= config.MaxSelectedCards;
     public List<CardData> SelectedCards => deck?.SelectedCards.ToList() ?? new List<CardData>();
 }

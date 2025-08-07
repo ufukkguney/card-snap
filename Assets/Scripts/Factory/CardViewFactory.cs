@@ -6,7 +6,7 @@ using UnityEngine.AddressableAssets;
 using System.Threading.Tasks;
 using System.Linq;
 
-public class CardViewFactory
+public class CardViewFactory : ICardViewFactory
 {
     [Inject] private readonly IObjectResolver container;
     
@@ -38,7 +38,6 @@ public class CardViewFactory
         var results = await Task.WhenAll(tasks);
         var successfulCards = results.Where(card => card != null).ToList();
         
-        Debug.Log($"Created {successfulCards.Count}/{cardDataList.Count} cards at designated positions");
         return successfulCards;
     }
     
@@ -48,10 +47,13 @@ public class CardViewFactory
     public void DestroyCardView(BaseCardView cardView)
         => Object.DestroyImmediate(cardView?.gameObject);
 
-    public void DestroyCardViews(List<BaseCardView> cardViews) 
-        => cardViews?.ForEach(DestroyCardView);
+    public void DestroyCardViews(List<BaseCardView> cardViews)
+    {
+        cardViews?.ForEach(DestroyCardView);
+        Cleanup();
+    }
 
-    public void Cleanup()
+    private void Cleanup()
     {
         ReleaseAsset(ref cachedCardUI);
         ReleaseAsset(ref cachedCard3D);
@@ -148,3 +150,4 @@ public class CardViewFactory
     }
 
 }
+

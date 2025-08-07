@@ -3,7 +3,7 @@ using VContainer.Unity;
 
 internal class GameInitializer : IStartable
 {
-    [Inject] private DeckController deckController;
+    [Inject] private IDeckController deckController;
 
     public void Start()
     {

@@ -1,24 +1,17 @@
-using System.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 
 public class GameplayTransitionManager
 {
-    private readonly DeckConfiguration config;
-    private readonly SelectionManager selectionManager;
-    private readonly GameplayConfiguration gameplayConfig;
-    private readonly EventManager eventManager;
+    [Inject] private readonly EventManager eventManager;
+    [Inject] private readonly DeckSelectionManager selectionManager;
+    private GameplayConfiguration gameplayConfig;
+    private DeckConfiguration config;
 
-    public GameplayTransitionManager(
-        DeckConfiguration config,
-        GameplayConfiguration gameplayConfig,
-        SelectionManager selectionManager,
-        CardViewFactory cardViewFactory,
-        EventManager eventManager)
+    public void Initialize(DeckConfiguration config, GameplayConfiguration gameplayConfig)
     {
         this.config = config;
         this.gameplayConfig = gameplayConfig;
-        this.selectionManager = selectionManager;
-        this.eventManager = eventManager;
     }
 
     public void StartGameplay()
@@ -30,21 +23,18 @@ public class GameplayTransitionManager
         }
 
         TransitionToGameplayUI();
-        
-        Debug.Log("Gameplay transition completed successfully");
     }
 
     public void ReturnToDeckSelection()
     {
         TransitionToDeckUI();
-        Debug.Log("Returned to deck selection");
     }
 
     private bool CanStartGameplay()
     {
         if (!selectionManager.IsMaxReached || 
-            config.deckAreaParent == null || 
-            config.gameplayAreaParent == null)
+            config.DeckAreaParent == null || 
+            config.GameplayAreaParent == null)
         {
             return false;
         }
@@ -59,26 +49,22 @@ public class GameplayTransitionManager
 
     private void TransitionToGameplayUI()
     {
-        if (config.deckAreaParent != null)
-            config.deckAreaParent.gameObject.SetActive(false);
+        if (config.DeckAreaParent != null)
+            config.DeckAreaParent.gameObject.SetActive(false);
 
-        if (config.gameplayAreaParent != null)
-            config.gameplayAreaParent.gameObject.SetActive(true);
+        if (config.GameplayAreaParent != null)
+            config.GameplayAreaParent.gameObject.SetActive(true);
 
-        Debug.Log("UI transitioned to gameplay mode");
-        
         CreateGameplay3DCards();
     }
 
     private void TransitionToDeckUI()
     {
-        if (config.gameplayAreaParent != null)
-            config.gameplayAreaParent.gameObject.SetActive(false);
-        
-        if (config.deckAreaParent != null)
-            config.deckAreaParent.gameObject.SetActive(true);
-        
-        Debug.Log("UI transitioned to deck selection mode");
+        if (config.GameplayAreaParent != null)
+            config.GameplayAreaParent.gameObject.SetActive(false);
+
+        if (config.DeckAreaParent != null)
+            config.DeckAreaParent.gameObject.SetActive(true);
     }
 
     private void CreateGameplay3DCards()

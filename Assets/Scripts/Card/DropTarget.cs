@@ -1,5 +1,6 @@
 using UnityEngine;
 using VContainer;
+
 public class DropTarget : MonoBehaviour
 {
     [Header("Target Settings")]
@@ -19,84 +20,44 @@ public class DropTarget : MonoBehaviour
     private void Start()
     {
         targetRenderer = GetComponent<Renderer>();
-        if (targetRenderer != null)
-            originalColor = targetRenderer.material.color;
+        if (targetRenderer != null) originalColor = targetRenderer.material.color;
     }
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        CardDragHandler dragHandler = other.GetComponent<CardDragHandler>();
-        
-        if (dragHandler?.IsCurrentlyDragging == true)
-        {
-            bool canAccept = CanAcceptCard();
-            SetHighlight(true, canAccept);
-        }
+        var dragHandler = other.GetComponent<CardDragHandler>();
+        if (dragHandler?.IsCurrentlyDragging == true) SetHighlight(true, CanAcceptCard());
     }
     
     private void OnTriggerExit2D(Collider2D other)
     {
-        CardDragHandler dragHandler = other.GetComponent<CardDragHandler>();
-        if (other.GetComponent<CardDragHandler>() != null) 
-            SetHighlight(false);
-
-        if (dragHandler.card3DView != currentCard) return;
-
-        RemoveCard();
-
-        Debug.Log($"OnTriggerExit2D: {other.name}");
+        var dragHandler = other.GetComponent<CardDragHandler>();
+        if (dragHandler != null) SetHighlight(false);
+        if (dragHandler?.Card3DView == currentCard) RemoveCard();
     }
     
-    public bool CanAcceptCard()
-    {
-        return !HasCard;
-    }
+    public bool CanAcceptCard() => !HasCard;
     
     public void PlaceCard(Card3DView cardView)
     {
         if (HasCard || cardView == null) return;
-        
         currentCard = cardView;
-        Debug.Log($"Card {cardView.name} placed on {gameObject.name}");
-        
         gameManager?.OnCardPlacedOnTarget(this, cardView);
     }
     
     public void RemoveCard()
     {
         if (!HasCard) return;
-        
         var removedCard = currentCard;
         currentCard = null;
-        Debug.Log($"Card {removedCard.name} removed from {gameObject.name}");
-        
         gameManager?.OnCardRemovedFromTarget(this, removedCard);
     }
     
-    public void ForceRemoveCard()
-    {
-        if (HasCard)
-        {
-            var removedCard = currentCard;
-            currentCard = null;
-            Debug.Log($"Card {removedCard.name} force removed from {gameObject.name}");
-        }
-    }
     
     private void SetHighlight(bool highlight, bool canAccept = true)
     {
         if (targetRenderer == null || isHighlighted == highlight) return;
-        
         isHighlighted = highlight;
-        
-        if (highlight)
-        {
-            Color targetColor = canAccept ? highlightColor : blockedColor;
-            targetRenderer.material.color = targetColor;
-        }
-        else
-        {
-            targetRenderer.material.color = originalColor;
-        }
+        targetRenderer.material.color = highlight ? (canAccept ? highlightColor : blockedColor) : originalColor;
     }
 }

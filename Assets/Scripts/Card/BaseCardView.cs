@@ -5,8 +5,6 @@ public abstract class BaseCardView : MonoBehaviour
     [Header("Card Data")]
     [SerializeField] protected CardData cardData;
     
-    protected bool isSelected = false;
-    
     public CardData Data
     {
         get => cardData;
@@ -16,15 +14,6 @@ public abstract class BaseCardView : MonoBehaviour
             UpdateUI();
         }
     }
-    
-    public bool IsSelected 
-    { 
-        get => isSelected;
-        set 
-        { 
-            isSelected = value;
-        }
-    }
     protected virtual void Start()
     {
         UpdateUI();
@@ -32,7 +21,14 @@ public abstract class BaseCardView : MonoBehaviour
     
     public void SetCardData(CardData newData)
     {
-        Data = newData;
+        Data = ValidateCardData(newData);
+    }
+    private CardData ValidateCardData(CardData data)
+    {
+        return new CardData(data.CardType,
+            Mathf.Max(0, data.Attack),
+            Mathf.Max(0, data.Defense)
+        );
     }
     
     protected abstract void UpdateUI();

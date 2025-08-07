@@ -20,11 +20,11 @@ public class CardDragHandler : MonoBehaviour
     public bool IsCurrentlyDragging => isDragging;
     public Vector3 OriginalPosition => originalPosition;
 
-    public Card3DView card3DView;
+    public Card3DView Card3DView;
     
     public void Initialize(Card3DView cardView)
     {
-        card3DView = cardView;
+        Card3DView = cardView;
         mainCamera = Camera.main;
         originalPosition = transform.position;
     }
@@ -55,7 +55,6 @@ public class CardDragHandler : MonoBehaviour
         dragTween?.Kill();
         
         Vector2 dropPosition = GetValidDropPosition();
-        Debug.Log($"Card dropped at: {dropPosition}");
         MoveTo(dropPosition, 1f / dragSmoothness);
     }
     
@@ -85,17 +84,15 @@ public class CardDragHandler : MonoBehaviour
             DropTarget dropTarget = target.GetComponent<DropTarget>();
             if (dropTarget != null && dropTarget.CanAcceptCard())
             {
-                Debug.Log($"Found valid drop target: {target.name} at {target.transform.position}");
                 
-                if (card3DView != null)
+                if (Card3DView != null)
                 {
-                    dropTarget.PlaceCard(card3DView);
+                    dropTarget.PlaceCard(Card3DView);
                 }
                 
                 return target.transform.position;
             }
         }
-        Debug.Log($"No valid drop target found, using original position: {originalPosition}");
         return MouseUtilities.GetValidDropPosition(mainCamera, originalPosition);
     }
 

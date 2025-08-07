@@ -9,25 +9,25 @@ public class Card3DView : BaseCardView
     [SerializeField] private TextMeshPro attackText;
     [SerializeField] private TextMeshPro defenseText;
     [SerializeField] private SpriteRenderer cardSprite;
-    
+
     private CardDragHandler dragHandler;
     private BoxCollider2D cardCollider;
-    
-    #region Unity Lifecycle
+
+    private int originalSpriteLayer;
+    private int originalTextLayer;
+    private const int DRAG_LAYER_BOOST = 100;
 
     protected override void Start()
     {
         base.Start();
         InitializeComponents();
+        StoreOriginalLayers();
     }
 
     private void OnMouseDown() => TryStartDrag();
     private void OnMouseDrag() => TryUpdateDrag();
     private void OnMouseUp() => TryStopDrag();
 
-    #endregion
-
-    #region BaseCardView Implementation
 
     protected override void UpdateUI()
     {
@@ -35,10 +35,6 @@ public class Card3DView : BaseCardView
         UpdateText(attackText, cardData.Attack.ToString());
         UpdateText(defenseText, cardData.Defense.ToString());
     }
-
-    #endregion
-
-    #region Drag Management
 
     public void SetDraggable(bool draggable)
     {
@@ -52,14 +48,12 @@ public class Card3DView : BaseCardView
     public void SetOriginalPosition(Vector3 position)
         => dragHandler?.SetOriginalPosition(position);
 
-    #endregion
-
 
     private void InitializeComponents()
     {
         dragHandler = GetComponent<CardDragHandler>();
         cardCollider = GetComponent<BoxCollider2D>();
-        
+
         dragHandler.Initialize(this);
         ValidateComponents();
     }
@@ -68,7 +62,7 @@ public class Card3DView : BaseCardView
     {
         if (dragHandler == null)
             Debug.LogError($"CardDragHandler missing on {gameObject.name}");
-            
+
         if (cardCollider == null)
             Debug.LogWarning($"No Collider found on {gameObject.name}. Drag functionality requires a Collider.");
     }
@@ -76,7 +70,10 @@ public class Card3DView : BaseCardView
     private void TryStartDrag()
     {
         if (CanStartDrag())
+        {
+            SetLayersUp();
             dragHandler.StartDragging();
+        }
     }
 
     private void TryUpdateDrag()
@@ -88,7 +85,10 @@ public class Card3DView : BaseCardView
     private void TryStopDrag()
     {
         if (dragHandler?.IsCurrentlyDragging == true)
+        {
             dragHandler.StopDragging();
+            ResetLayersToOriginal();
+        }
     }
 
     private bool CanStartDrag()
@@ -98,6 +98,28 @@ public class Card3DView : BaseCardView
     {
         if (textComponent != null)
             textComponent.text = value;
+    }
+    
+    private void StoreOriginalLayers()
+    {
+        originalSpriteLayer = cardSprite.sortingOrder;
+        originalTextLayer = cardNameText.sortingOrder;
+    }
+
+    private void SetLayersUp()
+    {
+        cardSprite.sortingOrder = originalSpriteLayer + DRAG_LAYER_BOOST;
+        cardNameText.sortingOrder = originalTextLayer + DRAG_LAYER_BOOST;
+        attackText.sortingOrder = originalTextLayer + DRAG_LAYER_BOOST;
+        defenseText.sortingOrder = originalTextLayer + DRAG_LAYER_BOOST;
+    }
+
+    private void ResetLayersToOriginal()
+    {
+        cardSprite.sortingOrder = originalSpriteLayer;
+        cardNameText.sortingOrder = originalTextLayer;
+        attackText.sortingOrder = originalTextLayer;
+        defenseText.sortingOrder = originalTextLayer;
     }
 
 }

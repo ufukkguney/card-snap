@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class EventManager
@@ -48,11 +47,4 @@ public class EventManager
     public void PublishCardClicked(BaseCardView cardView, CardData cardData) 
         => Publish(new CardEvents.Clicked(cardView, cardData));
     
-    
-    public void ClearAllListeners()
-    {
-        var totalCleared = eventListeners.Values.Sum(list => list.Count);
-        eventListeners.Clear();
-        Debug.Log($"Cleared {totalCleared} event listeners");
-    }
 }

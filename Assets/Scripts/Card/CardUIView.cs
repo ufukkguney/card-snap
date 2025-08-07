@@ -21,8 +21,6 @@ public class CardUIView : BaseCardView, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"Card clicked: {cardData.CardType} (ATK: {cardData.Attack}, DEF: {cardData.Defense})");
-        
         eventManager?.PublishCardClicked(this, cardData);
     }
     

@@ -7,10 +7,6 @@ public class GameplayConfiguration
     [Header("3D Card Positions")]
     [SerializeField] public List<Transform> cardPositions = new List<Transform>();
     
-    [Header("Gameplay Settings")]
-    [SerializeField] public float cardInstantiationDelay = 0.2f;
-    [SerializeField] public bool animateCardPlacement = true;
-   
    public DropTarget AiDropTarget;
     
     public int MaxGameplayCards => cardPositions?.Count ?? 0;
